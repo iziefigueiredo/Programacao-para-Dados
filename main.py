@@ -1,4 +1,7 @@
 import csv
+import re
+import random
+from collections import defaultdict
 
 class CSVReader:
     """
@@ -70,6 +73,26 @@ class GameStats:
             except ValueError:
                 continue  
         return len(unique_free_games)
+    
+    def percentage_games(self):
+        """
+        
+        Retorna  as porcentagens de jogos gratuitos e pagos.
+        
+        """
+        total_unique_games = self.total_games()
+        total_free = self.total_free_games()
+        total_paid = total_unique_games - total_free
+    
+        percent_free = (total_free / total_unique_games) * 100
+        percent_paid = (total_paid / total_unique_games) * 100
+    
+        return {
+            'free_percentage': round(percent_free, 2),
+            'paid_percentage': round(percent_paid, 2)
+        }
+    
+    
         
 #Principal     
         
@@ -77,18 +100,11 @@ if __name__ == '__main__':
     reader = CSVReader()
     jogos = reader.load_data()
     stats = GameStats(jogos)
+    percentages = stats.percentage_games()
     
-    if jogos:
-        # Exibir tipos de dados e nomes das colunas
-        print('Tipos de dados e nomes de cada coluna:')
-        primeiro_jogo = jogos[0]
-        for coluna, valor in primeiro_jogo.items():
-            print(f'{coluna}: {type(valor)}')
-
-      
-    else:
-        print('Nenhum dado carregado para análise.')
     
-    print('\n')
-    print(f'Total de jogos carregados: {stats.total_games()}')
-    print(f'Total de jogos gratuitos: {stats.total_free_games()}')
+    
+    
+    print(f"Jogos gratuitos: {percentages['free_percentage']}%")
+    print(f"Jogos pagos: {percentages['paid_percentage']}%")
+  
