@@ -1,5 +1,6 @@
 import csv
 from collections import defaultdict
+import re
 
 class CSVReader:
     """
@@ -75,6 +76,30 @@ class GameStats:
             'free_percentage': round(percent_free, 2),
             'paid_percentage': round(percent_paid, 2)
         }
+    
+    def yearly_releases(self):
+        """
+        
+        Retorna um dicionário com o total de jogos únicos lançados por ano.
+        
+        """
+        games_year = defaultdict(int)
+        seen_games = set()
+
+        for game in self.games:
+            app_id = game['AppID']
+            if app_id in seen_games:
+                continue
+
+            seen_games.add(app_id)
+
+            release_date = game.get('Release date', '').strip()
+            year_match = re.search(r'\b\d{4}\b', release_date)
+            year = year_match.group() if year_match else 'Unknown'
+
+            games_year[year] += 1
+
+        return dict(games_year)
 
 
 
@@ -90,4 +115,5 @@ if __name__ == '__main__':
     print(f"Jogos pagos: {percentages['paid_percentage']}%")
 
     print('\n')
+    print(f"Jogos lançados por ano: {stats.yearly_releases()}")
    
